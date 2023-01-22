@@ -1,24 +1,31 @@
 const express = require("express");
 const router = express.Router();
 
-const { validation, ctrlWrapper, isValidId } = require("../../middlewares");
+const {
+  auth,
+  validation,
+  ctrlWrapper,
+  isValidId,
+} = require("../../middlewares");
 const { schemas } = require("../../models/contact");
-const { ctrl } = require("../../controllers");
+const { contacts: ctrl } = require("../../controllers");
 
-router.get("/", ctrlWrapper(ctrl.getAllContacts));
+router.get("/", auth, ctrlWrapper(ctrl.getAllContacts));
 
-router.get("/:contactId", isValidId, ctrlWrapper(ctrl.getContactById));
+router.get("/:contactId", auth, isValidId, ctrlWrapper(ctrl.getContactById));
 
 router.post(
   "/",
+  auth,
   validation(schemas.addContactSchema),
   ctrlWrapper(ctrl.addContact)
 );
 
-router.delete("/:contactId", isValidId, ctrlWrapper(ctrl.deleteContactById));
+router.delete("/:contactId", auth, isValidId, ctrlWrapper(ctrl.deleteContactById));
 
 router.put(
   "/:contactId",
+   auth,
   isValidId,
   validation(schemas.addContactSchema),
   ctrlWrapper(ctrl.updateContactById)
@@ -26,6 +33,7 @@ router.put(
 
 router.patch(
   "/:contactId/favorite",
+  auth, 
   isValidId,
   validation(schemas.updateFavoriteSchema),
   ctrlWrapper(ctrl.updateStatusContact)
